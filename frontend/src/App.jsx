@@ -9,18 +9,19 @@ function App() {
     const [file, setFile] = useState(null)
     const [loading, setloading] = useState(false)
     const [previewImage, setPreviewImage] = useState(null)
+    const [previewImageName, setPreviewImageName] = useState("")
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0])
 
         const filePrev = e.target.files[0]
-        console.log();
 
         if(filePrev){
             const reader = new FileReader()
 
             reader.onloadend = () => {
                 setPreviewImage(reader.result)
+                setPreviewImageName(filePrev.name)
             }
 
             reader.readAsDataURL(filePrev)
@@ -46,13 +47,13 @@ function App() {
             console.log(response.data);
 
 
-
         } catch (error) {
             console.error("Error is", error);
         }
 
         setloading(false)
         setPreviewImage(null)
+        setPreviewImageName("")
     }
 
     return (
@@ -94,7 +95,8 @@ function App() {
                             >Upload</button>
                         </div>
                     </div>
-                    <div className=" mt-3 flex justify-center">
+                    <div className=" mt-3 flex flex-col items-center">
+                        <p className='text-2xl text-white text-center'>{previewImageName}</p>
                         <img className=' max-h-72' src={previewImage} alt="" />
                     </div>
                 </div>

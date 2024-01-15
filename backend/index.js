@@ -1,13 +1,13 @@
+require('dotenv').config()
 const express = require('express')
 const upload = require('./middleware/multer.middleware')
 const uploadOnCloudynary = require('./utils/cloudinary.utils')
 const cors = require('cors')
 
 const app = express()
-const port = 3000
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 }))
 
@@ -37,4 +37,4 @@ app.post('/upload', upload.single("uploadImage"), async (req, res) => {
 })
 
 
-app.listen(port, () => console.log(`server started: http://localhost:${port}`))
+app.listen(process.env.PORT, () => console.log(`server started: http://localhost:${process.env.PORT}`))

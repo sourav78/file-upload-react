@@ -2,9 +2,9 @@ const { v2: cloudinary } = require('cloudinary')
 const fs = require('fs')
           
 cloudinary.config({ 
-  cloud_name: 'sourav78', 
-  api_key: '616679495748689', 
-  api_secret: 'xqXJsq-Mitt6QJxn_hv6D9gR_C0' 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET 
 });
 
 const uploadOnCloudynary = async (localFilePath, imageName) => {
