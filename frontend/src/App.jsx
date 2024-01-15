@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import uploadPng from './assets/cloud-computing.png'
 import './App.css'
-
+import { message } from 'antd';
 import axios from 'axios'
+import Preview from './components/Preview';
 
 function App() {
 
@@ -11,12 +12,33 @@ function App() {
     const [previewImage, setPreviewImage] = useState(null)
     const [previewImageName, setPreviewImageName] = useState("")
 
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: 'Image uploaded successfully',
+        });
+    };
+    const error = () => {
+        messageApi.open({
+            type: 'error',
+            content: 'Image not uploaded',
+        });
+    };
+    const warning = () => {
+        messageApi.open({
+            type: 'warning',
+            content: 'No image has been chosen. Please choose an image',
+        });
+    };
+
     const handleFileChange = (e) => {
         setFile(e.target.files[0])
 
         const filePrev = e.target.files[0]
 
-        if(filePrev){
+        if (filePrev) {
             const reader = new FileReader()
 
             reader.onloadend = () => {
@@ -25,12 +47,17 @@ function App() {
             }
 
             reader.readAsDataURL(filePrev)
-        }else{
+        } else {
             setPreviewImage(null)
         }
     }
 
     const handleClick = async () => {
+
+        if(file === null){
+            warning()
+            return
+        }
 
         setloading(true)
 
@@ -44,13 +71,20 @@ function App() {
                 }
             })
 
-            console.log(response.data);
+            console.log(response);
+
+            if(response.data.success === true){
+                success()
+            }else{
+                error()
+            }
 
 
         } catch (error) {
             console.error("Error is", error);
         }
 
+        setFile(null)
         setloading(false)
         setPreviewImage(null)
         setPreviewImageName("")
@@ -58,11 +92,12 @@ function App() {
 
     return (
         <>
+            {contextHolder}
             <div className="w-full h-screen overflow-hidden bg-slate-700">
                 <div className="w-3/5 border-white p-4 m-auto">
                     <h1 className='text-5xl font-semibold text-white text-center'>Upload your image</h1>
-                    <div className="w-9/12 m-auto p-8 border border-white mt-10">
-                        <div className="w-96 p-3 min-h-48 border border-white rounded-lg m-auto bg-slate-600 flex justify-center items-center">
+                    <div className="w-9/12 m-auto p-8 border border-gray-400 mt-10">
+                        <div className="w-96 p-3 min-h-48 border-2 border-dashed border-white rounded-lg m-auto bg-slate-600 flex justify-center items-center">
                             <form encType="multipart/form-data">
                                 {
                                     loading ? (
@@ -89,16 +124,14 @@ function App() {
                             </form>
                         </div>
                         <div className="mt-8 text-center">
-                            <button 
-                                onClick={handleClick} 
+                            <button
+                                onClick={handleClick}
                                 className='m-auto rounded-md shadow-xl bg-green-500 hover:bg-green-600 transition-all px-3 py-1 text-white text-2xl'
                             >Upload</button>
                         </div>
                     </div>
-                    <div className=" mt-3 flex flex-col items-center">
-                        <p className='text-2xl text-white text-center'>{previewImageName}</p>
-                        <img className=' max-h-72' src={previewImage} alt="" />
-                    </div>
+                    <Preview previewImageName={previewImageName} previewImage={previewImage} />
+                    
                 </div>
             </div>
         </>
