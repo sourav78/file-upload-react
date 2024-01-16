@@ -60,6 +60,7 @@ function App() {
         }
 
         setloading(true)
+        console.log();
 
         const formData = new FormData()
         formData.append('uploadImage', file)
